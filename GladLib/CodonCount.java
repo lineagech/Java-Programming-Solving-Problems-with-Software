@@ -1,0 +1,78 @@
+
+/**
+ * Write a description of CodonCount here.
+ * 
+ * @Chia-Hao
+ * @2018.10.05
+ */
+import edu.duke.*;
+import java.io.*;
+import java.util.*;
+public class CodonCount {
+    private HashMap<String, Integer> map;
+    
+    public CodonCount()
+    {
+        map = new HashMap<String, Integer>();
+    }
+    public void buildCodonMap(int start, String dna)
+    {   
+        dna = dna.trim();
+        map = new HashMap<String, Integer>();
+        for(int i = start; i < dna.length(); i += 3)
+        {
+            if( i+3 <= dna.length() )
+            {
+                String codon = dna.substring(i,i+3);
+                if( map.containsKey(codon) ){
+                    map.put(codon, map.get(codon)+1);
+                }
+                else {
+                    map.put(codon, 1);
+                }
+            }
+        }
+    }
+    public String getMostCommonCodon()
+    {   
+        int maxOccur = 0;
+        String mostCommonCodon = "";
+        for( String codon : map.keySet() )
+        {
+            if( map.get(codon) > maxOccur ) {
+                maxOccur = map.get(codon);
+                mostCommonCodon = codon;
+            }
+        }
+        return mostCommonCodon;
+    }
+    public void printCodonCounts(int start, int end)
+    {
+        for( String codon : map.keySet() )
+        {
+            if( map.get(codon) >= start && map.get(codon) <= end ) {
+                System.out.println(codon+"\t"+map.get(codon));
+            }
+        }
+    }
+    public void tester()
+    {
+        FileResource fr = new FileResource();
+        String dna = fr.asString();
+        for(int i = 0; i < 3; i++)
+        {
+            buildCodonMap(i, dna);
+            System.out.println("Reading frame starting with "+i+" results in "
+                               +map.size()+" unique codons");
+            System.out.println("most common codon is "+getMostCommonCodon()+"\t"
+                                +map.get(getMostCommonCodon()));
+            printCodonCounts(7, 7);
+        }
+    }
+    public void quiz()
+    {
+        System.out.println("1.");
+        tester();
+        
+    }
+}
