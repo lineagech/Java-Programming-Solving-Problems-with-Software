@@ -1,0 +1,25 @@
+
+/**
+ * Write a description of DistanceFilter here.
+ * 
+ * @Chia-Hao     
+ * @2018.10.10
+ */
+public class DistanceFilter implements Filter {
+    private Location location;
+    private double distMax;
+    public DistanceFilter(Location loc, double max) { 
+        location = loc;
+        distMax = max;
+    }
+    public boolean satisfies(QuakeEntry qe)
+    {
+        if( location.distanceTo(qe.getLocation()) < distMax ) {
+            return true;
+        }
+        return false;
+    }
+    public String getName(){
+        return "DistanceFilter";
+    }
+}
