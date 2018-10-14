@@ -1,0 +1,96 @@
+
+/**
+ * Write a description of EfficientMarkovModel here.
+ * 
+ * @Chia-Hao
+ * @2018.10.13
+ */
+import java.util.*;
+
+public class EfficientMarkovModel extends AbstractMarkovModel {
+    private int predictNum;
+    private HashMap<String,ArrayList<String>> map;
+    public EfficientMarkovModel(int N) {
+        predictNum = N; 
+        myRandom = new Random();
+        map = new HashMap<String,ArrayList<String>>();
+    }
+    
+    public void setRandom(int seed){
+        myRandom = new Random(seed);
+    }
+    
+    public void setTraining(String s){
+        myText = s.trim();
+        buildMap();
+    }
+    
+    public String getRandomText(int numChars){
+        if (myText == null){
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        int index = myRandom.nextInt(myText.length()-predictNum);
+        String key = myText.substring(index, index+predictNum);
+        sb.append(key);
+        for(int k=0; k < numChars-predictNum; k++){
+            ArrayList<String> follows = getFollows(key);
+            if(follows.size() == 0) break;
+            index = myRandom.nextInt(follows.size());
+            String next = follows.get(index);
+            sb.append(next);
+            key = key.substring(1) + next;
+        }
+        
+        return sb.toString();
+    }
+    
+    public String toString() {
+        return "Efficient MarkovModel of order "+predictNum;
+    }
+    
+    public void buildMap() {
+        for( int i = 0; i <= myText.length()-predictNum; i++ ) {
+            String key = myText.substring(i, i+predictNum);
+            ArrayList<String> result = new ArrayList<String>();
+            if( map.containsKey(key) ) continue;
+            
+            int index = myText.indexOf(key, 0);
+            while( index != -1 ) {
+                if( index + key.length() < myText.length() ) {
+                    result.add(myText.substring(index+key.length(), index+key.length()+1));
+                    index = myText.indexOf(key, index+1);
+                }
+                else {
+                    break;
+                }
+            }
+            map.put(key, result);
+        }
+        
+        //printHashMapInfo();
+    }
+    public ArrayList<String> getFollows(String key) {
+        return map.get(key);
+    }
+    
+    public void printHashMapInfo()
+    {
+        System.out.println(map);
+        System.out.println("Key size of the map: "+map.keySet().size());
+        
+        int maxValue = 0;
+        String maxKey = "";
+        for(String key : map.keySet()){
+            if(map.get(key).size() > maxValue) {
+                maxValue = map.get(key).size();
+            }
+        }
+        for(String key : map.keySet()){
+            if(map.get(key).size() == maxValue) {
+                System.out.println("Max size is "+maxValue);
+                System.out.println("Max size corresponded key is "+ key);
+            }
+        }
+    }
+}
